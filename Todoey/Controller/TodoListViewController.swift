@@ -11,19 +11,19 @@ import CoreData
 
 class TodoListViewController: UITableViewController {
     
+    @IBOutlet weak var searchBar: UISearchBar!
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var itemArray = [Itema]()
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
- 
-        print(dataFilePath)
-//        loadItems()
+        searchBar.delegate = self
+//        print(dataFilePath)
+        loadItems()
     }
-    
+
     //MARK: - Tableview Datasource Methods
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
@@ -41,7 +41,6 @@ class TodoListViewController: UITableViewController {
     }
     
     //MARK: - Tableview Delegate Methods
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
@@ -79,10 +78,8 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    //MARK: - Model Manipulation Methods
-    
+    //MARK: - Model Manipulation Methods    
     func saveItems() {
-        
         do {
             try context.save()
         } catch {
@@ -90,14 +87,33 @@ class TodoListViewController: UITableViewController {
         }
     }
     
-    func loadItems() {
-        let request : NSFetchRequest<Itema> = Itema.fetchRequest()
+    func loadItems(with request: NSFetchRequest<Itema> = Itema.fetchRequest()) {
         do {
             try itemArray = context.fetch(request)
         } catch  {
-            print("fetching")
+            print("fetching error: \(error)")
         }
+        tableView.reloadData()
     }
     
 }
 
+//MARK: - UISearchBar Delegate
+extension TodoListViewController: UISearchBarDelegate {
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchText.count == 0 {
+            loadItems()
+            
+            searchBar.resignFirstResponder()
+        } else {
+           let request : NSFetchRequest<Itema> = Itema.fetchRequest()
+           request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+           request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+           loadItems(with: request)
+        }
+        
+    }
+    
+}
