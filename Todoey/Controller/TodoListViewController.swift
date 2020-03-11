@@ -55,7 +55,7 @@ class TodoListViewController: UITableViewController {
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var alertTextField = UITextField()
         
-        let alert = UIAlertController(title: "Add new ite", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // when button is pressed i what to print the text
