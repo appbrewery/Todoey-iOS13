@@ -11,6 +11,12 @@ import CoreData
 
 class TodoListViewController: UITableViewController {
     
+    var selectedCategory: Category? {
+        didSet {
+            loadItems()
+        }
+    }
+    
     @IBOutlet weak var searchBar: UISearchBar!
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var itemArray = [Itema]()
@@ -20,7 +26,6 @@ class TodoListViewController: UITableViewController {
         super.viewDidLoad()
         searchBar.delegate = self
 //        print(dataFilePath)
-        loadItems()
     }
 
     //MARK: - Tableview Datasource Methods
@@ -62,6 +67,7 @@ class TodoListViewController: UITableViewController {
             let newItem = Itema(context: self.context)
             newItem.name = alertTextField.text!
             newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             self.itemArray.append(newItem)
             
             self.saveItems()
@@ -87,8 +93,16 @@ class TodoListViewController: UITableViewController {
         }
     }
     
-    func loadItems(with request: NSFetchRequest<Itema> = Itema.fetchRequest()) {
+    func loadItems(with request: NSFetchRequest<Itema> = Itema.fetchRequest(), predicate: NSPredicate? = nil ) {
         do {
+            let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+            
+            if let additionalPredicate = predicate {
+                request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+            } else {
+                request.predicate = categoryPredicate
+            }
+            
             try itemArray = context.fetch(request)
         } catch  {
             print("fetching error: \(error)")
@@ -109,9 +123,9 @@ extension TodoListViewController: UISearchBarDelegate {
             searchBar.resignFirstResponder()
         } else {
            let request : NSFetchRequest<Itema> = Itema.fetchRequest()
-           request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+           let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText)
            request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-           loadItems(with: request)
+           loadItems(with: request, predicate: predicate)
         }
         
     }

@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import CoreData
 
 class CategoryViewController: UITableViewController {
-    var categories: [String] = ["app", "interview", "excercise", "car"]
-    
+    var categories = [Category]()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var itemArray = [Itema]()
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadCategories()
 
     }
 
@@ -25,23 +28,32 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         
-        cell.textLabel?.text = categories[indexPath.row]
+        cell.textLabel?.text = categories[indexPath.row].name
         return cell
     }
     
     // MARK: - TableView Delegate methods
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "showItems", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let selectedCategory = categories[tableView.indexPathForSelectedRow!.row]
+        let destination = segue.destination as! TodoListViewController
+        destination.selectedCategory = selectedCategory
+    }
     
     // MARK: - Add new categories
     @IBAction func categoryPressed(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Add new category", message: "", preferredStyle: .alert)
         var alertTextField = UITextField()
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-//
-//            let newItem = Itema(context: self.context)
-//            newItem.name = alertTextField.text!
-//            newItem.done = false
-            self.categories.append(alertTextField.text!)
-            
+
+            let newCategory = Category(context: self.context)
+            newCategory.name = alertTextField.text!
+            self.categories.append(newCategory)
+            self.saveCategories()
             self.tableView.reloadData()
         }
         alert.addTextField { (textField) in
@@ -55,8 +67,21 @@ class CategoryViewController: UITableViewController {
 
     // MARK: - Data Manipulation
 
-
-
-
+    func saveCategories() {
+        do {
+            try context.save()
+        } catch  {
+            print("saving: \(error)")
+        }
+    }
     
+    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
+        do {
+            try categories = context.fetch(request)
+        } catch  {
+            print("loading: \(error)")
+        }
+        tableView.reloadData()
+    }
+
 }
