@@ -34,25 +34,31 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row].title
         
-        if itemArray[indexPath.row].done == true{
-            cell.accessoryType = .checkmark
-        }else{
-            cell.accessoryType = .none
-        }
+        let item = itemArray[indexPath.row]
+        
+        cell.textLabel?.text = item.title
+        
+        cell.accessoryType = item.done == true ? .checkmark : .none //using turnary operator
+        
+//        if item.done == true{
+//            cell.accessoryType = .checkmark
+//        }else{
+//            cell.accessoryType = .none
+//        }
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //print(itemArray[indexPath.row])
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        if itemArray[indexPath.row].done == false{
-            itemArray[indexPath.row].done = true
-        } else{
-            itemArray[indexPath.row].done = false
-        }
+//        if itemArray[indexPath.row].done == false{
+//            itemArray[indexPath.row].done = true
+//        } else{
+//            itemArray[indexPath.row].done = false
+//        }
             
         if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
