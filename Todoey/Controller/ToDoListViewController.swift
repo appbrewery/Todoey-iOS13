@@ -16,10 +16,32 @@ class ToDoListViewController: UITableViewController {
         }
     }
 
+    let defaults = UserDefaults.standard
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        itemArray = defaults.array(forKey: "ToDoListArray") as? [String] ?? [String]()
+
     }
+    
+    // MARK: - IBAction
+
+       @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+           let alertVC = UIAlertController(title: nil, message: "Add a task", preferredStyle: .alert)
+           alertVC.addTextField { $0.placeholder = "Write your task here" }
+           let action = UIAlertAction(title: "Add", style: .default) { _ in
+               guard let task = alertVC.textFields?.first?.text,
+                   !task.isEmpty else { return }
+               self.itemArray.append(task)
+
+            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+
+
+           }
+           alertVC.addAction(action)
+           present(alertVC, animated: true)
+       }
 
     // MARK: - TableView Datasource
 
@@ -43,21 +65,6 @@ class ToDoListViewController: UITableViewController {
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-
-    // MARK: - IBAaction
-
-
-    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
-        let alertVC = UIAlertController(title: nil, message: "Add a task", preferredStyle: .alert)
-        alertVC.addTextField { $0.placeholder = "Write your task here" }
-        let action = UIAlertAction(title: "Add", style: .default) { _ in
-            guard let task = alertVC.textFields?.first?.text,
-                !task.isEmpty else { return }
-            self.itemArray.append(task)
-        }
-        alertVC.addAction(action)
-        present(alertVC, animated: true)
     }
 }
 
