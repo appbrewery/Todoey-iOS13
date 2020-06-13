@@ -10,61 +10,77 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    var itemArray: [String] = [] {
+    var tasks: [Task] = [] {
         didSet {
             self.tableView.reloadData()
         }
     }
 
-    let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Tasks.plist")
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        itemArray = defaults.array(forKey: "ToDoListArray") as? [String] ?? [String]()
+        loadItems()
 
     }
     
     // MARK: - IBAction
 
-       @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
-           let alertVC = UIAlertController(title: nil, message: "Add a task", preferredStyle: .alert)
-           alertVC.addTextField { $0.placeholder = "Write your task here" }
-           let action = UIAlertAction(title: "Add", style: .default) { _ in
-               guard let task = alertVC.textFields?.first?.text,
-                   !task.isEmpty else { return }
-               self.itemArray.append(task)
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        let alertVC = UIAlertController(title: nil, message: "Add a task", preferredStyle: .alert)
+        alertVC.addTextField { $0.placeholder = "Write your task here" }
+        let action = UIAlertAction(title: "Add", style: .default) { _ in
+            guard let task = alertVC.textFields?.first?.text,
+                !task.isEmpty else { return }
+            self.tasks.append(Task(taskName: task))
+            self.saveTasks()
 
-            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+        }
+        alertVC.addAction(action)
+        present(alertVC, animated: true)
+    }
 
+    // MARK: - Methods
 
-           }
-           alertVC.addAction(action)
-           present(alertVC, animated: true)
-       }
+    // must add do / catch to manage error and unwrap dataFilePath
+    private func saveTasks() {
+        let encoder = PropertyListEncoder()
+
+        let data = try? encoder.encode(tasks)
+        try? data?.write(to: dataFilePath!)
+    }
+
+    // must add do / catch to manage error and unwrap dataFilePath
+    private func loadItems() {
+        guard let data = try? Data(contentsOf: dataFilePath!) else { return }
+        let decoder = PropertyListDecoder()
+        guard let decodedData = try? decoder.decode([Task].self, from: data) else { return }
+        tasks = decodedData
+    }
 
     // MARK: - TableView Datasource
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return tasks.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row]
+        cell.textLabel?.text = tasks[indexPath.row].taskName
+
+        cell.accessoryType = tasks[indexPath.row].taskIsDone ? .checkmark : .none
+
         return cell
     }
 
     // MARK: - Tableview Delegate
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-
+        tasks[indexPath.row].taskIsDone.toggle()
+        saveTasks()
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
+
     }
 }
 
