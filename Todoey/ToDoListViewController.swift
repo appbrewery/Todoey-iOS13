@@ -8,12 +8,17 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ToDoListViewController: UITableViewController {
 
+    
+    let itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
+    
+    
 
 
 }
