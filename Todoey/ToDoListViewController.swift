@@ -25,7 +25,6 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let todo = itemArray[indexPath.row]
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cell, for: indexPath)
         
         cell.textLabel?.text = todo
@@ -33,6 +32,19 @@ class ToDoListViewController: UITableViewController {
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+            // if it already has a checkmark
+            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        } else {
+            // if it doesn't have a checkmark 
+            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        }
+        
+        //To create an animation of deselection
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 
 }
 
