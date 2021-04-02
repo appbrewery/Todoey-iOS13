@@ -18,7 +18,20 @@ class ToDoListViewController: UITableViewController {
         // Do any additional setup after loading the view.
     }
     
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return itemArray.count
+    }
     
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let todo = itemArray[indexPath.row]
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.cell, for: indexPath)
+        
+        cell.textLabel?.text = todo
+        
+        return cell
+    }
 
 
 }
