@@ -9,13 +9,25 @@
 import UIKit
 
 class ToDoListViewController: UITableViewController {
-
-    
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+        
+    var itemArray = [Item]()
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        
+        
+        let newItem = Item()
+        newItem.title = "hello world"
+        itemArray.append(newItem)
+        
+        //to load up data from user defaults
+//        if let items = defaults.array(forKey: K.defaultsArrayKey) as? [Item] {
+//            itemArray = items
+//        }
+        
+        
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -24,28 +36,32 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let todo = itemArray[indexPath.row]
+        
+        let todo = itemArray[indexPath.row].title
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cell, for: indexPath)
         
+        let item = itemArray[indexPath.row]
+        
         cell.textLabel?.text = todo
+
+        //Turnary Expression
+        cell.accessoryType = item.done ? .checkmark : .none
+
         
         return cell
     }
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            // if it already has a checkmark
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            // if it doesn't have a checkmark 
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        // Make it the opposite
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+        saveItems()
         
         //To create an animation of deselection
         tableView.deselectRow(at: indexPath, animated: true)
     }
-
+    
     //MARK: - Add New Items
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -63,8 +79,12 @@ class ToDoListViewController: UITableViewController {
         
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            self.itemArray.append(textField.text!)
-            self.tableView.reloadData()
+            
+            let newItem = Item()
+            newItem.title = textField.text!
+            self.itemArray.append(newItem)
+    
+            self.saveItems()
         }
         
         alert.addAction(action)
@@ -73,5 +93,18 @@ class ToDoListViewController: UITableViewController {
     }
     
     
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+        
+        tableView.reloadData()
+    }
 }
+
 
