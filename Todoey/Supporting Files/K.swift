@@ -13,5 +13,5 @@ struct K {
     static let defaultsArrayKey = "TodoListArray"
     
     static let goToItemsSeg = "goToItems"
-    static let CategoryCell = "CategoryCell"
+    static let CategoryCell = "CategoryItemCell"
 }
