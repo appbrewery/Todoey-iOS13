@@ -39,6 +39,10 @@ class CategoryViewController: UITableViewController {
         return cell
         
     }
+//    
+//    tableview override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        performSegue(withIdentifier: <#T##String#>, sender: <#T##Any?#>)
+//    }
     
     
     //MARK: - Save and load methods
@@ -68,7 +72,7 @@ class CategoryViewController: UITableViewController {
         
         var textField = UITextField()
         
-        let alert = UIAlertController(title: "Add a new category", message: "this is a message", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add a new category", message: "", preferredStyle: .alert)
         
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create a new category"
