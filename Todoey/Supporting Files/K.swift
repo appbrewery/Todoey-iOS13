@@ -11,4 +11,7 @@ import Foundation
 struct K {
     static let cell = "ToDoItemCell"
     static let defaultsArrayKey = "TodoListArray"
+    
+    static let goToItemsSeg = "goToItems"
+    static let CategoryCell = "CategoryCell"
 }
