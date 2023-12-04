@@ -3,7 +3,7 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     let itemArray = [ "Find hope" , "Buy thingys" , "Survive"  ]
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -16,7 +16,7 @@ class TodoListViewController: UITableViewController {
         // The number of rows is equal to the count of items in the itemArray.
         return itemArray.count
     }
-
+    
     // This method is called to provide a cell for a specific row.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Dequeue a reusable cell with the identifier "ToDoItemCell" for the specified indexPath.
@@ -28,9 +28,36 @@ class TodoListViewController: UITableViewController {
         // Return the configured cell.
         return cell
     }
+    
+    // MARK: - TableView Delegate Methods
+    
+    // This method is called when a cell is selected
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // Get the selected item from the array
+        let selectedItem = itemArray[indexPath.row]
+        
+        // You can perform any action you want with the selected item
+        print("Selected Item: \(selectedItem)")
+        
+        // Get the selected cell
+        if let cell = tableView.cellForRow(at: indexPath) {
+            // Toggle the checkmark accessory type for the selected UITableViewCell.
+            // If the current accessory type is .checkmark, it sets it to .none; otherwise, it sets it to .checkmark.
+            // - The ternary operator (a ? b : c) is used here. If the condition (cell.accessoryType == .checkmark) is true,
+            //   the value after the '?' (i.e., .none) is assigned; otherwise, the value after the ':' (i.e., .checkmark) is assigned.
 
-
-
+            cell.accessoryType = (cell.accessoryType == .checkmark) ? .none : .checkmark
+        }
+        
+        // Animation when the row is clicked
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        
+    }
+    
+    
+    
+    
 }
 
 
