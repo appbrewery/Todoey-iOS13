@@ -4,8 +4,16 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = [ "Find hope" , "Buy thingys" , "Survive"  ]
     
+    // var to keep the data entered by the user
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // get the items for the stored otems in let defaults (if there are any)
+        if let items = defaults.array(forKey: "TodoListAray") as? [String] {
+            itemArray = items
+        }
         
     }
     
@@ -59,13 +67,19 @@ class TodoListViewController: UITableViewController {
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        
 
         // Declare a variable to capture the text field
         var textField: UITextField?
 
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
+            
             // Use the captured text field to access the entered text and add it to the array
             self.itemArray.append(textField!.text!)
+            
+            // keep the data entered by the user
+            self.defaults.set(self.itemArray, forKey: "TodoListAray")
+            
             //reload the table with the new entry
             self.tableView.reloadData()
         }
