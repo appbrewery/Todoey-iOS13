@@ -2,7 +2,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    var itemArray = [ "Find hope" , "Buy thingys" , "Survive"  ]
+    var itemArray = [Items]()
     
     // var to keep the data entered by the user
     let defaults = UserDefaults.standard
@@ -10,10 +10,47 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // get the items for the stored otems in let defaults (if there are any)
-        if let items = defaults.array(forKey: "TodoListAray") as? [String] {
-            itemArray = items
-        }
+        let newItem = Items()
+        newItem.title = "Find hope"
+        itemArray.append(newItem)
+        
+        let newItem2 = Items()
+        newItem2.title = "Save the world"
+        itemArray.append(newItem2)
+        
+        let newItem3 = Items()
+        newItem3.title = "Buy peanuts"
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+        itemArray.append(newItem3)
+
+
+        
         
     }
     
@@ -30,8 +67,15 @@ class TodoListViewController: UITableViewController {
         // Dequeue a reusable cell with the identifier "ToDoItemCell" for the specified indexPath.
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        // Set the text label of the cell to the corresponding item in the itemArray.
-        cell.textLabel?.text = itemArray[indexPath.row]
+        // define current item
+        let item = itemArray[indexPath.row]
+        
+        // Set the text label of the cell to the corresponding item in the itemArray defined above
+        cell.textLabel?.text = item.title
+        
+        // terniary operator to change the done 
+        cell.accessoryType = (cell.accessoryType == .checkmark) ? .none : .checkmark
+
         
         // Return the configured cell.
         return cell
@@ -41,12 +85,12 @@ class TodoListViewController: UITableViewController {
     
     // This method is called when a cell is selected
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Get the selected item from the array
-        let selectedItem = itemArray[indexPath.row]
         
-        // You can perform any action you want with the selected item
-        // print("Selected Item: \(selectedItem)")
+        // toggling the 'done' property of the itemArray with swift terniary operator
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+
         
+            
         // Get the selected cell
         if let cell = tableView.cellForRow(at: indexPath) {
             // Toggle the checkmark accessory type for the selected UITableViewCell.
@@ -54,7 +98,6 @@ class TodoListViewController: UITableViewController {
             // - The ternary operator (a ? b : c) is used here. If the condition (cell.accessoryType == .checkmark) is true,
             //   the value after the '?' (i.e., .none) is assigned; otherwise, the value after the ':' (i.e., .checkmark) is assigned.
             
-            cell.accessoryType = (cell.accessoryType == .checkmark) ? .none : .checkmark
         }
         
         // Animation when the row is clicked
@@ -74,8 +117,14 @@ class TodoListViewController: UITableViewController {
 
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
             
+            // create new item
+            let newItem = Items()
+            
+            // create the title for the new file
+            newItem.title = textField!.text!
+            
             // Use the captured text field to access the entered text and add it to the array
-            self.itemArray.append(textField!.text!)
+            self.itemArray.append(newItem)
             
             // keep the data entered by the user
             self.defaults.set(self.itemArray, forKey: "TodoListAray")
