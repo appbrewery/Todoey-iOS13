@@ -10,16 +10,27 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Get the URL of the document directory for the current app's sandboxed environment
+//        FileManager.default: The default file manager for the app.
+//        urls(for:in:): A method to get URLs for specified directories in a specified domain.
+//        .documentDirectory: Indicates the document directory, a location where you can store user-generated content.
+//        .userDomainMask: Specifies the user's home directory as the domain for the search.
+//        .first: Retrieves the first URL from the array of URLs returned by urls(for:in:).
+        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        print(dataFilePath)
+        
         // items of the table
         // Create instances of Items using the initializer
         let newItem = Items(title: "Find hope", done: false)
         let newItem2 = Items(title: "Save the world", done: false)
         let newItem3 = Items(title: "Buy peanuts", done: false)
+        let newItem4 = Items(title: "Avoid carbs", done: false)
 
         // Append the new items to the itemArray
         itemArray.append(newItem)
         itemArray.append(newItem2)
         itemArray.append(newItem3)
+        itemArray.append(newItem4)
 
         
         if let savedItems = defaults.array(forKey: "TodoListArray") as? [[String: Any]] {
