@@ -11,16 +11,28 @@ class TodoListViewController: UITableViewController {
         super.viewDidLoad()
         
         // items of the table
-        let newItem = Items()
-        newItem.title = "Find hope"
+        // Create instances of Items using the initializer
+        let newItem = Items(title: "Find hope", done: false)
+        let newItem2 = Items(title: "Save the world", done: false)
+        let newItem3 = Items(title: "Buy peanuts", done: false)
+
+        // Append the new items to the itemArray
         itemArray.append(newItem)
-        
-        let newItem2 = Items()
-        newItem2.title = "Save the world"
         itemArray.append(newItem2)
+        itemArray.append(newItem3)
+
         
-        let newItem3 = Items()
-        newItem3.title = "Buy peanuts"
+        if let savedItems = defaults.array(forKey: "TodoListArray") as? [[String: Any]] {
+            // Assuming each item in the saved array is a dictionary
+            itemArray = savedItems.compactMap { dictionary in
+                if let title = dictionary["title"] as? String,
+                   let done = dictionary["done"] as? Bool {
+                    return Items(title: title, done: done)
+                }
+                return nil
+            }
+        }
+
     }
     
     // MARK: - Tableview Datasource Methods
@@ -71,25 +83,24 @@ class TodoListViewController: UITableViewController {
     // MARK: - Add New Item
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
-        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
-        
-
         // Declare a variable to capture the text field
-        var textField: UITextField?
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
 
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
             
             // create new item
-            let newItem = Items()
+            let newItem = Items(title: "Your Title Here", done: false)
             
             // create the title for the new file
-            newItem.title = textField!.text!
+            newItem.title = textField.text!
             
             // Use the captured text field to access the entered text and add it to the array
             self.itemArray.append(newItem)
             
             // keep the data entered by the user
-            self.defaults.set(self.itemArray, forKey: "TodoListAray")
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             
             //reload the table with the new entry
             self.tableView.reloadData()
