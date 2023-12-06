@@ -10,6 +10,7 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // items of the table
         let newItem = Items()
         newItem.title = "Find hope"
         itemArray.append(newItem)
@@ -20,50 +21,20 @@ class TodoListViewController: UITableViewController {
         
         let newItem3 = Items()
         newItem3.title = "Buy peanuts"
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-        itemArray.append(newItem3)
-
-
-        
-        
     }
     
     // MARK: - Tableview Datasource Methods
     
     // This method is called to determine the number of rows in the specified section.
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         // The number of rows is equal to the count of items in the itemArray.
         return itemArray.count
     }
     
     // This method is called to provide a cell for a specific row.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         // Dequeue a reusable cell with the identifier "ToDoItemCell" for the specified indexPath.
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
@@ -74,8 +45,7 @@ class TodoListViewController: UITableViewController {
         cell.textLabel?.text = item.title
         
         // terniary operator to change the done 
-        cell.accessoryType = (cell.accessoryType == .checkmark) ? .none : .checkmark
-
+        cell.accessoryType = item.done ? .checkmark : .none
         
         // Return the configured cell.
         return cell
@@ -86,19 +56,11 @@ class TodoListViewController: UITableViewController {
     // This method is called when a cell is selected
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        // toggling the 'done' property of the itemArray with swift terniary operator
+        // Toggle the 'done' property of the item at the specified index path row
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-
         
-            
-        // Get the selected cell
-        if let cell = tableView.cellForRow(at: indexPath) {
-            // Toggle the checkmark accessory type for the selected UITableViewCell.
-            // If the current accessory type is .checkmark, it sets it to .none; otherwise, it sets it to .checkmark.
-            // - The ternary operator (a ? b : c) is used here. If the condition (cell.accessoryType == .checkmark) is true,
-            //   the value after the '?' (i.e., .none) is assigned; otherwise, the value after the ':' (i.e., .checkmark) is assigned.
-            
-        }
+        // reload the table
+        tableView.reloadData()
         
         // Animation when the row is clicked
         tableView.deselectRow(at: indexPath, animated: true)
@@ -135,8 +97,10 @@ class TodoListViewController: UITableViewController {
         
         // Capture the textfield when it's added
         alert.addTextField { (alertTextField) in
+            
             // Set a placeholder text for the text field
             alertTextField.placeholder = "Create new item"
+            
             // Capture the reference to the text field for later use
             textField = alertTextField
         }
