@@ -1,7 +1,7 @@
 import Foundation
 
 // It needs to be encodable
-class Items: Encodable {
+class Items: Encodable , Decodable {
     // Properties
     var title: String
     var done: Bool

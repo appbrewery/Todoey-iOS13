@@ -15,31 +15,7 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        // items of the table
-        // Create instances of Items using the initializer
-        let newItem = Items(title: "Find hope", done: false)
-        let newItem2 = Items(title: "Save the world", done: false)
-        let newItem3 = Items(title: "Buy peanuts", done: false)
-        
-        // Append the new items to the itemArray
-        itemArray.append(newItem)
-        itemArray.append(newItem2)
-        itemArray.append(newItem3)
-        
-        //
-        //        if let savedItems = defaults.array(forKey: "TodoListArray") as? [[String: Any]] {
-        //            // Assuming each item in the saved array is a dictionary
-        //            itemArray = savedItems.compactMap { dictionary in
-        //                if let title = dictionary["title"] as? String,
-        //                   let done = dictionary["done"] as? Bool {
-        //                    return Items(title: title, done: done)
-        //                }
-        //                return nil
-        //            }
-        //        }
+        loadItems()
         
     }
     
@@ -152,11 +128,22 @@ class TodoListViewController: UITableViewController {
             print("Error encoding item array, \(error)")
         }
         
-        
     }
     
+    func loadItems(){
+        
+        // access the data from the dataFilePath
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            // create the decoder
+            let decoder = PropertyListDecoder()
+            do {
+                // decode the data
+                itemArray = try decoder.decode([Items].self, from: data)
+            } catch {
+                print("Error decoding the data, \(error)")
+            }
+        }
+    }
 }
-    
-    
 
 
