@@ -4,46 +4,43 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = [Items]()
     
-    // var to keep the data entered by the user
-    let defaults = UserDefaults.standard
+    // Get the URL of the document directory for the current app's sandboxed environment
+    //        FileManager.default: The default file manager for the app.
+    //        urls(for:in:): A method to get URLs for specified directories in a specified domain.
+    //        .documentDirectory: Indicates the document directory, a location where you can store user-generated content.
+    //        .userDomainMask: Specifies the user's home directory as the domain for the search.
+    //        .first: Retrieves the first URL from the array of URLs returned by urls(for:in:).
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Get the URL of the document directory for the current app's sandboxed environment
-//        FileManager.default: The default file manager for the app.
-//        urls(for:in:): A method to get URLs for specified directories in a specified domain.
-//        .documentDirectory: Indicates the document directory, a location where you can store user-generated content.
-//        .userDomainMask: Specifies the user's home directory as the domain for the search.
-//        .first: Retrieves the first URL from the array of URLs returned by urls(for:in:).
-        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        print(dataFilePath)
+        
         
         // items of the table
         // Create instances of Items using the initializer
         let newItem = Items(title: "Find hope", done: false)
         let newItem2 = Items(title: "Save the world", done: false)
         let newItem3 = Items(title: "Buy peanuts", done: false)
-        let newItem4 = Items(title: "Avoid carbs", done: false)
-
+        
         // Append the new items to the itemArray
         itemArray.append(newItem)
         itemArray.append(newItem2)
         itemArray.append(newItem3)
-        itemArray.append(newItem4)
-
         
-        if let savedItems = defaults.array(forKey: "TodoListArray") as? [[String: Any]] {
-            // Assuming each item in the saved array is a dictionary
-            itemArray = savedItems.compactMap { dictionary in
-                if let title = dictionary["title"] as? String,
-                   let done = dictionary["done"] as? Bool {
-                    return Items(title: title, done: done)
-                }
-                return nil
-            }
-        }
-
+        //
+        //        if let savedItems = defaults.array(forKey: "TodoListArray") as? [[String: Any]] {
+        //            // Assuming each item in the saved array is a dictionary
+        //            itemArray = savedItems.compactMap { dictionary in
+        //                if let title = dictionary["title"] as? String,
+        //                   let done = dictionary["done"] as? Bool {
+        //                    return Items(title: title, done: done)
+        //                }
+        //                return nil
+        //            }
+        //        }
+        
     }
     
     // MARK: - Tableview Datasource Methods
@@ -67,7 +64,7 @@ class TodoListViewController: UITableViewController {
         // Set the text label of the cell to the corresponding item in the itemArray defined above
         cell.textLabel?.text = item.title
         
-        // terniary operator to change the done 
+        // terniary operator to change the done
         cell.accessoryType = item.done ? .checkmark : .none
         
         // Return the configured cell.
@@ -81,6 +78,9 @@ class TodoListViewController: UITableViewController {
         
         // Toggle the 'done' property of the item at the specified index path row
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+        // call to the function saveItems
+        self.saveItems()
         
         // reload the table
         tableView.reloadData()
@@ -98,7 +98,7 @@ class TodoListViewController: UITableViewController {
         var textField = UITextField()
         
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
-
+        
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
             
             // create new item
@@ -110,11 +110,12 @@ class TodoListViewController: UITableViewController {
             // Use the captured text field to access the entered text and add it to the array
             self.itemArray.append(newItem)
             
-            // keep the data entered by the user
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            // call to the function saveItems
+            self.saveItems()
             
-            //reload the table with the new entry
+            // reload the table
             self.tableView.reloadData()
+            
         }
         
         // Capture the textfield when it's added
@@ -126,10 +127,36 @@ class TodoListViewController: UITableViewController {
             // Capture the reference to the text field for later use
             textField = alertTextField
         }
-
+        
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
+    
+    
+    // MARK: - Model Manipulation Methods
+    
+    func saveItems() {
+        
+        // Create an instance of PropertyListEncoder, which is responsible for encoding property lists.
+        let encoder = PropertyListEncoder()
+        
+        do {
+            // Attempt to encode the array of items (self.itemArray).
+            let data = try encoder.encode(itemArray)
+            
+            // Try to write the encoded data to the file specified by self.dataFilePath.
+            try data.write(to: dataFilePath!)
+            
+        } catch {
+            // If an error occurs during encoding or writing to the file, catch the error and print a descriptive message.
+            print("Error encoding item array, \(error)")
+        }
+        
+        
+    }
+    
 }
+    
+    
 
 
