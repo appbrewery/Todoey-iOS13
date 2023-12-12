@@ -1,8 +1,33 @@
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
     
-    var itemArray = [Items]()
+    var itemArray = [Item]()
+    
+//    // This line gets the shared instance of the UIApplication, which represents the current running app.
+//    --  let sharedApplication = UIApplication.shared
+//
+//    // This line gets the AppDelegate instance using the shared application instance.
+//    --  let appDelegate = sharedApplication.delegate
+//
+//    // This line casts the delegate as an instance of the AppDelegate class.
+//    // The "as!" operator is used for a forced downcast. It assumes that the delegate is an instance of AppDelegate, and if it's not, it will crash at runtime.
+//    --  let appDelegateAsAppDelegate = appDelegate as! AppDelegate
+//
+//    // This line accesses the persistentContainer property of the AppDelegate.
+//    // The persistent container is a part of Core Data, which is a framework used for data storage and management in iOS applications.
+//    --  let persistentContainer = appDelegateAsAppDelegate.persistentContainer
+//
+//    // This line accesses the viewContext property of the persistent container.
+//    // The view context is a managed object context that is used for interacting with the Core Data objects.
+//    --  let context = persistentContainer.viewContext
+//
+//    // Now, 'context' can be used to perform Core Data operations like fetching, saving, and deleting objects.
+
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
     
     // Get the URL of the document directory for the current app's sandboxed environment
     //        FileManager.default: The default file manager for the app.
@@ -15,7 +40,7 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadItems()
+        //loadItems()
         
     }
     
@@ -77,11 +102,13 @@ class TodoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
             
-            // create new item
-            let newItem = Items(title: "Your Title Here", done: false)
+            
+            let newItem = Item(context: self.context)
             
             // create the title for the new file
             newItem.title = textField.text!
+            // set done property of the new item to false because done is mandatory according to our entity
+            newItem.done = false
             
             // Use the captured text field to access the entered text and add it to the array
             self.itemArray.append(newItem)
@@ -113,37 +140,29 @@ class TodoListViewController: UITableViewController {
     
     func saveItems() {
         
-        // Create an instance of PropertyListEncoder, which is responsible for encoding property lists.
-        let encoder = PropertyListEncoder()
-        
         do {
-            // Attempt to encode the array of items (self.itemArray).
-            let data = try encoder.encode(itemArray)
-            
-            // Try to write the encoded data to the file specified by self.dataFilePath.
-            try data.write(to: dataFilePath!)
+            try context.save()
             
         } catch {
-            // If an error occurs during encoding or writing to the file, catch the error and print a descriptive message.
-            print("Error encoding item array, \(error)")
+            print("Error saving context, \(error)")
         }
-        
+        self.tableView.reloadData()
     }
     
-    func loadItems(){
-        
-        // access the data from the dataFilePath
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            // create the decoder
-            let decoder = PropertyListDecoder()
-            do {
-                // decode the data
-                itemArray = try decoder.decode([Items].self, from: data)
-            } catch {
-                print("Error decoding the data, \(error)")
-            }
-        }
-    }
+//    func loadItems(){
+//
+//        // access the data from the dataFilePath
+//        if let data = try? Data(contentsOf: dataFilePath!) {
+//            // create the decoder
+//            let decoder = PropertyListDecoder()
+//            do {
+//                // decode the data
+//                itemArray = try decoder.decode([Items].self, from: data)
+//            } catch {
+//                print("Error decoding the data, \(error)")
+//            }
+//        }
+//    }
 }
 
 
