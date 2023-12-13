@@ -5,29 +5,29 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
     
-//    // This line gets the shared instance of the UIApplication, which represents the current running app.
-//    --  let sharedApplication = UIApplication.shared
-//
-//    // This line gets the AppDelegate instance using the shared application instance.
-//    --  let appDelegate = sharedApplication.delegate
-//
-//    // This line casts the delegate as an instance of the AppDelegate class.
-//    // The "as!" operator is used for a forced downcast. It assumes that the delegate is an instance of AppDelegate, and if it's not, it will crash at runtime.
-//    --  let appDelegateAsAppDelegate = appDelegate as! AppDelegate
-//
-//    // This line accesses the persistentContainer property of the AppDelegate.
-//    // The persistent container is a part of Core Data, which is a framework used for data storage and management in iOS applications.
-//    --  let persistentContainer = appDelegateAsAppDelegate.persistentContainer
-//
-//    // This line accesses the viewContext property of the persistent container.
-//    // The view context is a managed object context that is used for interacting with the Core Data objects.
-//    --  let context = persistentContainer.viewContext
-//
-//    // Now, 'context' can be used to perform Core Data operations like fetching, saving, and deleting objects.
-
+    //    // This line gets the shared instance of the UIApplication, which represents the current running app.
+    //    --  let sharedApplication = UIApplication.shared
+    //
+    //    // This line gets the AppDelegate instance using the shared application instance.
+    //    --  let appDelegate = sharedApplication.delegate
+    //
+    //    // This line casts the delegate as an instance of the AppDelegate class.
+    //    // The "as!" operator is used for a forced downcast. It assumes that the delegate is an instance of AppDelegate, and if it's not, it will crash at runtime.
+    //    --  let appDelegateAsAppDelegate = appDelegate as! AppDelegate
+    //
+    //    // This line accesses the persistentContainer property of the AppDelegate.
+    //    // The persistent container is a part of Core Data, which is a framework used for data storage and management in iOS applications.
+    //    --  let persistentContainer = appDelegateAsAppDelegate.persistentContainer
+    //
+    //    // This line accesses the viewContext property of the persistent container.
+    //    // The view context is a managed object context that is used for interacting with the Core Data objects.
+    //    --  let context = persistentContainer.viewContext
+    //
+    //    // Now, 'context' can be used to perform Core Data operations like fetching, saving, and deleting objects.
+    
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
+    
     
     // Get the URL of the document directory for the current app's sandboxed environment
     //        FileManager.default: The default file manager for the app.
@@ -37,9 +37,9 @@ class TodoListViewController: UITableViewController {
     //        .first: Retrieves the first URL from the array of URLs returned by urls(for:in:).
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+
         loadItems()
         
     }
@@ -80,13 +80,13 @@ class TodoListViewController: UITableViewController {
         // Toggle the 'done' property of the item at the specified index path row
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-////////////CODE TO DELETE INSTEAD OF CHECK
-//        // This line of code deletes the item at the specified indexPath.row from the Core Data context.
-//        context.delete(itemArray[indexPath.row])
-//
-//        // This line of code removes the same item from the local itemArray.
-//        itemArray.remove(at: indexPath.row)
-
+        ////////////CODE TO DELETE INSTEAD OF CHECK
+        //        // This line of code deletes the item at the specified indexPath.row from the Core Data context.
+        //        context.delete(itemArray[indexPath.row])
+        //
+        //        // This line of code removes the same item from the local itemArray.
+        //        itemArray.remove(at: indexPath.row)
+        
         
         // call to the function saveItems to pass from the context to the real database
         saveItems()
@@ -120,7 +120,7 @@ class TodoListViewController: UITableViewController {
             
             // call to the function saveItems
             self.saveItems()
-  
+            
             
         }
         
@@ -151,12 +151,9 @@ class TodoListViewController: UITableViewController {
         }
         self.tableView.reloadData()
     }
-    
-    // This function is responsible for loading items from Core Data into the itemArray.
-    func loadItems() {
-        // Create a fetch request for the "Item" entity.
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-
+    // this function is to load items based on a given fetch request. The flexibility is provided by allowing you to either provide a custom fetch request (with:) or use the default one (Item.fetchRequest()).
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+        
         do {
             // Attempt to fetch items from Core Data using the fetch request.
             // The fetched items will be stored in the itemArray.
@@ -165,8 +162,32 @@ class TodoListViewController: UITableViewController {
             // If an error occurs during the fetch operation, print an error message.
             print("Error fetching data from context, \(error)")
         }
+        tableView.reloadData()
     }
-
 }
+
+// MARK: - Extension for the SearchBar Method
+extension TodoListViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        // Set the predicate of the fetch request to filter results based on a condition.
+        // In this case, the condition is defined using NSPredicate.
+        // NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        // - "title" is the attribute to filter on.
+        // - "CONTAINS[cd]" checks if the title contains the specified text, case-insensitive and diacritic-insensitive.
+        // - %@ is a placeholder for the actual text provided by searchBar.text!
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        // Set the sort descriptors for the fetch request to define the order of fetched results.
+        // In this case, a single sort descriptor is used:
+        // NSSortDescriptor(key: "title", ascending: true)
+        // - "title": Specifies that the sorting is based on the "title" attribute of the fetched entities.
+        // - `ascending: true`: Indicates that the sorting should be in ascending order.
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        // calling loadItem with the new request value
+        loadItems(with: request)
+      
+    }
+}
+
 
 
