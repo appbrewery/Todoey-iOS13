@@ -40,7 +40,7 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //loadItems()
+        loadItems()
         
     }
     
@@ -149,20 +149,21 @@ class TodoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-//    func loadItems(){
-//
-//        // access the data from the dataFilePath
-//        if let data = try? Data(contentsOf: dataFilePath!) {
-//            // create the decoder
-//            let decoder = PropertyListDecoder()
-//            do {
-//                // decode the data
-//                itemArray = try decoder.decode([Items].self, from: data)
-//            } catch {
-//                print("Error decoding the data, \(error)")
-//            }
-//        }
-//    }
+    // This function is responsible for loading items from Core Data into the itemArray.
+    func loadItems() {
+        // Create a fetch request for the "Item" entity.
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+
+        do {
+            // Attempt to fetch items from Core Data using the fetch request.
+            // The fetched items will be stored in the itemArray.
+            itemArray = try context.fetch(request)
+        } catch {
+            // If an error occurs during the fetch operation, print an error message.
+            print("Error fetching data from context, \(error)")
+        }
+    }
+
 }
 
 
