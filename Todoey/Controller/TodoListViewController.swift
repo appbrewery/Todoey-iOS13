@@ -80,11 +80,16 @@ class TodoListViewController: UITableViewController {
         // Toggle the 'done' property of the item at the specified index path row
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        // call to the function saveItems
-        self.saveItems()
+////////////CODE TO DELETE INSTEAD OF CHECK
+//        // This line of code deletes the item at the specified indexPath.row from the Core Data context.
+//        context.delete(itemArray[indexPath.row])
+//
+//        // This line of code removes the same item from the local itemArray.
+//        itemArray.remove(at: indexPath.row)
+
         
-        // reload the table
-        tableView.reloadData()
+        // call to the function saveItems to pass from the context to the real database
+        saveItems()
         
         // Animation when the row is clicked
         tableView.deselectRow(at: indexPath, animated: true)
@@ -115,9 +120,7 @@ class TodoListViewController: UITableViewController {
             
             // call to the function saveItems
             self.saveItems()
-            
-            // reload the table
-            self.tableView.reloadData()
+  
             
         }
         
