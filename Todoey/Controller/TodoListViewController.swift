@@ -172,7 +172,10 @@ extension TodoListViewController: UISearchBarDelegate {
         if searchBar.text?.isEmpty ?? true {
             // If the search bar text is empty, load all items and resign first responder
             loadItems()
+            
+            // send the request to backfround thread to avoud app crashes
             DispatchQueue.main.async {
+                // Hide the keyboard when the search bar is empty
                 searchBar.resignFirstResponder()
             }
         } else {
