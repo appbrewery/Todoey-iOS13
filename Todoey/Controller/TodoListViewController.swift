@@ -169,24 +169,31 @@ class TodoListViewController: UITableViewController {
 // MARK: - Extension for the SearchBar Method
 extension TodoListViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-        // Set the predicate of the fetch request to filter results based on a condition.
-        // In this case, the condition is defined using NSPredicate.
-        // NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        // - "title" is the attribute to filter on.
-        // - "CONTAINS[cd]" checks if the title contains the specified text, case-insensitive and diacritic-insensitive.
-        // - %@ is a placeholder for the actual text provided by searchBar.text!
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        // Set the sort descriptors for the fetch request to define the order of fetched results.
-        // In this case, a single sort descriptor is used:
-        // NSSortDescriptor(key: "title", ascending: true)
-        // - "title": Specifies that the sorting is based on the "title" attribute of the fetched entities.
-        // - `ascending: true`: Indicates that the sorting should be in ascending order.
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        // calling loadItem with the new request value
-        loadItems(with: request)
-      
+        if searchBar.text?.isEmpty ?? true {
+            // If the search bar text is empty, load all items and resign first responder
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        } else {
+            // If there is text in the search bar, filter and load items based on the search text
+            let request: NSFetchRequest<Item> = Item.fetchRequest()
+            
+            if let text = searchBar.text {
+                // Set the predicate of the fetch request to filter results based on a condition.
+                // In this case, the condition is defined using NSPredicate.
+                request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", text)
+                
+                // Set the sort descriptors for the fetch request to define the order of fetched results.
+                request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+                
+                // calling loadItem with the new request value
+                loadItems(with: request)
+            }
+        }
     }
+
+    
 }
 
 
