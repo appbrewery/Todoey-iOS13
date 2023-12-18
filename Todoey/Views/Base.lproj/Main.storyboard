@@ -109,6 +109,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Todoey" id="8oI-8Z-3GA">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="NHV-yf-Kx5">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="sIk-8g-84h" id="wwh-d6-hye"/>
                             </connections>

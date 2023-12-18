@@ -5,21 +5,21 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
     
-    //    // This line gets the shared instance of the UIApplication, which represents the current running app.
+    //    // gets the shared instance of the UIApplication, which represents the current running app.
     //    --  let sharedApplication = UIApplication.shared
     //
-    //    // This line gets the AppDelegate instance using the shared application instance.
+    //    // gets the AppDelegate instance using the shared application instance.
     //    --  let appDelegate = sharedApplication.delegate
     //
-    //    // This line casts the delegate as an instance of the AppDelegate class.
+    //    // casts the delegate as an instance of the AppDelegate class.
     //    // The "as!" operator is used for a forced downcast. It assumes that the delegate is an instance of AppDelegate, and if it's not, it will crash at runtime.
     //    --  let appDelegateAsAppDelegate = appDelegate as! AppDelegate
     //
-    //    // This line accesses the persistentContainer property of the AppDelegate.
+    //    // accesses the persistentContainer property of the AppDelegate.
     //    // The persistent container is a part of Core Data, which is a framework used for data storage and management in iOS applications.
     //    --  let persistentContainer = appDelegateAsAppDelegate.persistentContainer
     //
-    //    // This line accesses the viewContext property of the persistent container.
+    //    // accesses the viewContext property of the persistent container.
     //    // The view context is a managed object context that is used for interacting with the Core Data objects.
     //    --  let context = persistentContainer.viewContext
     //
