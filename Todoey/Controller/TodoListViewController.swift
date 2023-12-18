@@ -5,6 +5,12 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
     
+    var selectedCategory : Category? {
+        didSet {
+            loadItems()
+        }
+    }
+    
     //    // gets the shared instance of the UIApplication, which represents the current running app.
     //    --  let sharedApplication = UIApplication.shared
     //
@@ -38,9 +44,7 @@ class TodoListViewController: UITableViewController {
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-
-        loadItems()
+        super.viewDidLoad()        
         
     }
     
@@ -114,6 +118,8 @@ class TodoListViewController: UITableViewController {
             newItem.title = textField.text!
             // set done property of the new item to false because done is mandatory according to our entity
             newItem.done = false
+            // property of the category parent of the item
+            newItem.categoryName = self.selectedCategory
             
             // Use the captured text field to access the entered text and add it to the array
             self.itemArray.append(newItem)
@@ -153,6 +159,10 @@ class TodoListViewController: UITableViewController {
     }
     // this function is to load items based on a given fetch request. The flexibility is provided by allowing you to either provide a custom fetch request (with:) or use the default one (Item.fetchRequest()).
     func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+        
+        let predicate = NSPredicate(format: "categoryName.name MATCHES %@", selectedCategory!.name!)
+        
+        request.predicate = predicate // correct predicate 
         
         do {
             // Attempt to fetch items from Core Data using the fetch request.
